@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const verifyHospitalToken = (req, res, next) => {
   const authHeader = req.header("Authorization");
-  const token = authHeader && authHeader.split(" ")[2];
+  const token = authHeader.split(" ")[1];
 
   if (!token)
     return res

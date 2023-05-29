@@ -4,6 +4,9 @@ const cors = require("cors");
 require("dotenv").config();
 
 const authRouter = require("./routes/auth");
+const doctorRouter = require("./routes/doctor");
+const patientRouter = require("./routes/patient");
+const hospitalRouter = require("./routes/hospital");
 
 const connectDB = async () => {
   try {
@@ -24,6 +27,9 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/auth", authRouter);
+app.use("/api/doctor", doctorRouter);
+app.use("/api/patient", patientRouter);
+app.use("/api/hospital", hospitalRouter);
 
 const PORT = process.env.PORT || 5000;
 
