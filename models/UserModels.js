@@ -49,6 +49,18 @@ const patientSchema = new mongoose.Schema({
     type: String,
     enum: ["nam", "nữ"],
   },
+  fatherName: {
+    type: String,
+  },
+  motherName: {
+    type: String,
+  },
+  fatherContact: {
+    type: String,
+  },
+  motherContact: {
+    type: String,
+  },
   birthday: {
     type: Date,
   },

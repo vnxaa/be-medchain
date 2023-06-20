@@ -21,6 +21,18 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Route to get all patients
+router.get("/", async (req, res) => {
+  try {
+    // Find all patients
+    const patients = await Patient.find();
+
+    res.json(patients);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
 // Route to update a patient
 router.put("/update/:id", async (req, res) => {
   const { id } = req.params;

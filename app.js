@@ -7,6 +7,7 @@ const authRouter = require("./routes/auth");
 const doctorRouter = require("./routes/doctor");
 const patientRouter = require("./routes/patient");
 const hospitalRouter = require("./routes/hospital");
+const medicalRecordsRouter = require("./routes/medicalRecords");
 
 const connectDB = async () => {
   try {
@@ -30,6 +31,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/doctor", doctorRouter);
 app.use("/api/patient", patientRouter);
 app.use("/api/hospital", hospitalRouter);
+app.use("/api/medicalRecord", medicalRecordsRouter);
 
 const PORT = process.env.PORT || 5000;
 

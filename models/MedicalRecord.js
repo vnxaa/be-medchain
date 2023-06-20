@@ -13,8 +13,8 @@ const medicalRecordSchema = new mongoose.Schema({
   },
   diagnosis: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Examination",
+      type: mongoose.Schema.Types.Mixed,
+      required: true,
     },
   ],
   date: {
