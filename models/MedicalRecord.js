@@ -17,6 +17,10 @@ const medicalRecordSchema = new mongoose.Schema({
       required: true,
     },
   ],
+  status: {
+    type: String,
+    enum: ["minted", "draft", "reject"],
+  },
   date: {
     type: Date,
     default: Date.now,
