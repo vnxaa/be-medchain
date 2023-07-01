@@ -12,6 +12,8 @@ router.post("/hospital/login", authController.hospitalLogin);
 // Login endpoint for doctor
 router.post("/doctor/login", authController.doctorLogin);
 
+router.post("/register", authController.register);
+router.post("/login", authController.login);
 // Update doctor status endpoint
 router.put(
   "/doctor/status",
