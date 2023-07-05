@@ -9,7 +9,7 @@ const patientRouter = require("./routes/patient");
 const hospitalRouter = require("./routes/hospital");
 const medicalRecordsRouter = require("./routes/medicalRecords");
 const appointmentRouter = require("./routes/appointment");
-
+const rejectReasonRouter = require("./routes/rejectReason");
 const connectDB = async () => {
   try {
     await mongoose.connect(
@@ -34,6 +34,7 @@ app.use("/api/patient", patientRouter);
 app.use("/api/hospital", hospitalRouter);
 app.use("/api/medicalRecord", medicalRecordsRouter);
 app.use("/api/appointment", appointmentRouter);
+app.use("/api/rejectReason", rejectReasonRouter);
 
 const PORT = process.env.PORT || 5000;
 

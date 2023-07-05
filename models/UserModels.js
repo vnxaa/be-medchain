@@ -36,6 +36,7 @@ const hospitalSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   phoneNumber: {
     type: String,
@@ -121,6 +122,11 @@ const doctorSchema = new mongoose.Schema({
   citizenId: {
     type: String,
   },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   medicalRecordsProvider: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -156,6 +162,11 @@ const staffSchema = new mongoose.Schema({
   },
   contactNumber: {
     type: String,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
   },
   citizenId: {
     type: String,
