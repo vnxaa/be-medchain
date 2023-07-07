@@ -20,5 +20,8 @@ router.put(
   verifyHospitalToken,
   authController.updateDoctorStatus
 );
-
+//user forget password
+router.post("/reset-password", authController.resetPassword);
+// get all user name
+router.get("/usernames", authController.getAllUsernames);
 module.exports = router;
