@@ -22,6 +22,27 @@ const rejectReasonController = {
         .json({ success: false, message: "Failed to create reject reason" });
     }
   },
+  getRejectReasonByMedicalRecordId: async (req, res) => {
+    try {
+      const medicalRecordId = req.params.medicalRecordId;
+
+      // Find the reject reason by medicalRecordId
+      const rejectReason = await RejectReason.findOne({ medicalRecordId });
+
+      if (!rejectReason) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Reject reason not found" });
+      }
+
+      res.json({ success: true, rejectReason });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ success: false, message: "Failed to retrieve reject reason" });
+    }
+  },
 
   getRejectReasonById: async (req, res) => {
     try {

@@ -16,5 +16,9 @@ router.put("/:id", rejectReasonController.updateRejectReason);
 
 // Route to delete a reject reason
 router.delete("/:id", rejectReasonController.deleteRejectReason);
+router.get(
+  "/medicalRecord/:medicalRecordId",
+  rejectReasonController.getRejectReasonByMedicalRecordId
+);
 
 module.exports = router;
