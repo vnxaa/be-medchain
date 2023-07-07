@@ -73,9 +73,6 @@ const patientSchema = new mongoose.Schema({
   address: {
     type: String,
   },
-  contactNumber: {
-    type: String,
-  },
   guardianCitizenId: {
     type: String,
   },

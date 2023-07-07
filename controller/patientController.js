@@ -35,7 +35,17 @@ const getAllPatients = async (req, res) => {
 // Update a patient
 const updatePatient = async (req, res) => {
   const { id } = req.params;
-  const { picture, gender, birthday, address, contactNumber, name } = req.body;
+  const {
+    picture,
+    gender,
+    birthday,
+    address,
+    name,
+    fatherName,
+    motherName,
+    fatherContact,
+    motherContact,
+  } = req.body;
 
   try {
     // Find the patient by ID
@@ -50,8 +60,11 @@ const updatePatient = async (req, res) => {
     patient.gender = gender;
     patient.birthday = birthday;
     patient.address = address;
-    patient.contactNumber = contactNumber;
     patient.name = name;
+    patient.fatherName = fatherName;
+    patient.motherName = motherName;
+    patient.fatherContact = fatherContact;
+    patient.motherContact = motherContact;
 
     // Save the updated patient
     const updatedPatient = await patient.save();
