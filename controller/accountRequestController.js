@@ -1,4 +1,4 @@
-const AccountRequest = require("../models/accountRequest");
+const AccountRequest = require("../models/AccountRequest");
 
 // Controller to create a new account request
 const createAccountRequest = async (req, res) => {
