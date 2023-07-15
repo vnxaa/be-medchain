@@ -20,5 +20,9 @@ router.put(
   "/status/:appointmentId",
   appointmentsControllers.updateAppointmentStatus
 );
-
+// Route for approving an appointment
+router.put(
+  "/approve/:appointmentId",
+  appointmentsControllers.approveAppointment
+);
 module.exports = router;

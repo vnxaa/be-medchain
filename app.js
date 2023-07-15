@@ -11,6 +11,8 @@ const medicalRecordsRouter = require("./routes/medicalRecords");
 const appointmentRouter = require("./routes/appointment");
 const rejectReasonRouter = require("./routes/rejectReason");
 const accountRequestRouter = require("./routes/accountRequest");
+const availableSlotRouter = require("./routes/availableSlot");
+const eventsRouter = require("./routes/events");
 const connectDB = async () => {
   try {
     await mongoose.connect(
@@ -37,7 +39,8 @@ app.use("/api/medicalRecord", medicalRecordsRouter);
 app.use("/api/appointment", appointmentRouter);
 app.use("/api/rejectReason", rejectReasonRouter);
 app.use("/api/accountRequest", accountRequestRouter);
-
+app.use("/api/availableSlot", availableSlotRouter);
+app.use("/api/events", eventsRouter);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

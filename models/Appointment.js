@@ -12,16 +12,9 @@ const appointmentSchema = new mongoose.Schema(
       ref: "Doctor",
       required: true,
     },
-    appointmentDate: {
-      type: Date,
-      required: true,
-    },
-    startTime: {
-      type: Date,
-      required: true,
-    },
-    endTime: {
-      type: Date,
+    slot: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AvailableSlot",
       required: true,
     },
     description: {
