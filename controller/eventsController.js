@@ -44,7 +44,7 @@ const eventsController = {
       const availableSlots = await AvailableSlot.find({
         isBooked: false,
         doctor: doctorId,
-        startTime: { $gte: moment().startOf("day").toDate() },
+        startTime: { $gt: moment().startOf("day").toDate() },
       });
 
       // Retrieve appointments for the specified doctor and patient with success, pending, or cancel status
