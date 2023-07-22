@@ -17,6 +17,10 @@ const appointmentSchema = new mongoose.Schema(
       ref: "AvailableSlot",
       required: true,
     },
+    code: {
+      type: String,
+      unique: true,
+    },
     description: {
       type: String,
     },

@@ -25,4 +25,11 @@ router.put(
   "/approve/:appointmentId",
   appointmentsControllers.approveAppointment
 );
+//get by appointmentId
+router.get("/:appointmentId", appointmentsControllers.getAppointmentById);
+// Get appointment by code
+router.get(
+  "/code/:appointmentCode",
+  appointmentsControllers.getAppointmentByCode
+);
 module.exports = router;

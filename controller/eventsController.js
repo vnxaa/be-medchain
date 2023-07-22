@@ -59,10 +59,8 @@ const eventsController = {
           (appointment) =>
             appointment.slot &&
             appointment.slot._id.toString() === slot._id.toString() &&
-            (appointment.status === "pending" ||
-              appointment.status === "cancelled")
+            appointment.status === "pending"
         );
-
         // Check if any matching appointment is in pending status
         const hasPendingAppointment = matchingAppointments.some(
           (appointment) => appointment.status === "pending"
@@ -116,6 +114,41 @@ const eventsController = {
         success: true,
         appointments,
         availableSlots: filteredAvailableSlots,
+      });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  },
+  checkPatientAppointments: async (req, res) => {
+    try {
+      const { doctorId, patientId } = req.params;
+      if (!doctorId || !patientId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Missing doctorId or patientId" });
+      }
+
+      // Retrieve appointments for the specified doctor and patient with success, pending, or cancel status
+      const appointments = await Appointment.find({
+        doctor: doctorId,
+        patient: patientId,
+        status: { $in: ["pending", "confirmed"] },
+      }).populate("slot");
+
+      // Filter appointments to include only those for today or in the future
+      const currentTime = moment();
+      const futureAppointments = appointments.filter(
+        (appointment) =>
+          appointment?.slot &&
+          moment(appointment.slot.endTime).isSameOrAfter(currentTime)
+      );
+      res.json({
+        success: true,
+        hasAppointments: futureAppointments.length > 0,
+        appointments: futureAppointments,
       });
     } catch (error) {
       console.error(error);
