@@ -1,14 +1,38 @@
 const Appointment = require("../models/Appointment");
 const AvailableSlot = require("../models/AvailableSlot");
-const { Patient } = require("../models/UserModels");
+const { Patient, Doctor } = require("../models/UserModels");
+
+const Barcode = require("jsbarcode");
+const { createCanvas } = require("canvas");
 const nodemailer = require("nodemailer");
-const generateCode = () => {
+const generateCode = async () => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const randomCharacter = characters.charAt(
     Math.floor(Math.random() * characters.length)
   );
   const randomNumber = Math.floor(1000000000 + Math.random() * 9000000000); // Generates a 10-digit random number
-  return `${randomCharacter}${randomNumber}`;
+  const code = `${randomCharacter}${randomNumber}`;
+
+  // Check if the generated code already exists in appointments
+  const existingAppointment = await Appointment.findOne({
+    code,
+    status: "confirmed",
+  });
+
+  // If the code already exists, regenerate a new code
+  if (existingAppointment) {
+    return generateCode(); // Recursive call to generate a new code
+  }
+
+  return code;
+};
+const generateBarcodeImage = async (code) => {
+  const canvas = createCanvas(200, 100);
+  Barcode(canvas, code, { format: "CODE128", displayValue: false });
+  // Convert the canvas to a PNG buffer
+  const buffer = canvas.toBuffer("image/png");
+
+  return buffer;
 };
 const appointmentController = {
   makeAppointment: async (req, res) => {
@@ -139,12 +163,19 @@ const appointmentController = {
           .status(404)
           .json({ success: false, message: "Patient not found" });
       }
-      console.log(patient.email);
+      const doctorId = appointment.doctor;
+      const doctor = await Doctor.findById(doctorId);
+      if (!doctor) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Doctor not found" });
+      }
       // Update the appointment status to "approved"
       appointment.status = "confirmed";
 
       // Update the appointment code
-      appointment.code = generateCode();
+      const code = await generateCode();
+      appointment.code = code;
 
       // Save the updated appointment to the database
       await appointment.save();
@@ -165,6 +196,8 @@ const appointmentController = {
       slot.isBooked = true;
       await slot.save();
 
+      // Generate the barcode image
+      const barcodeImageBuffer = await generateBarcodeImage(code);
       // Send appointment information to the user's email
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -173,21 +206,177 @@ const appointmentController = {
           pass: process.env.pass,
         },
       });
-
+      // console.log(patient.email);
       const mailOptions = {
         from: "medchaincompany@gmail.com",
         to: "vnxa01@gmail.com", // Replace with the user's email address
-        subject: "Appointment Approved",
+        subject: "Đặt lịch khám thành công",
         html: `
-        <h1>Appointment Approved</h1>
-        <p>Your appointment has been approved.</p>
-        <p>Appointment Details:</p>
-        <p>Doctor: ${appointment.doctor}</p>
-        <p>Date: ${appointment.date}</p>
-        <p>Time: ${appointment.time}</p>
-        <p>Location: ${appointment.location}</p>
-        <p>Please arrive on time for your appointment.</p>
-      `,
+        
+
+        <!doctype html>
+        <html lang="en-US">
+        
+        <head>
+            <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+            <title>Đặt khám thành công</title>
+            <meta name="description" content="Appointment Reminder Email Template">
+        </head>
+        <style>
+            a:hover {text-decoration: underline !important;}
+        </style>
+        
+        <body marginheight="0" topmargin="0" marginwidth="0" style="margin: 0px; background-color: #f2f3f8;" leftmargin="0">
+            <table cellspacing="0" border="0" cellpadding="0" width="100%" bgcolor="#f2f3f8"
+                style="@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;">
+                <tr>
+                    <td>
+                        <table style="background-color: #f2f3f8; max-width:670px; margin:0 auto;" width="100%" border="0"
+                            align="center" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td style="height:80px;">&nbsp;</td>
+                            </tr>
+                            <!-- Logo -->
+                            <tr>
+                                <td style="text-align:center;">
+                                <img width="60" src="https://i.ibb.co/qmTw3hp/logo.png" title="logo" alt="logo">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="height:20px;">&nbsp;</td>
+                            </tr>
+                            <!-- Email Content -->
+                            <tr>
+                                <td>
+                                    <table width="95%" border="0" align="center" cellpadding="0" cellspacing="0"
+                                        style="max-width:670px; background:#fff; border-radius:3px;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);padding:0 40px;">
+                                        <tr>
+                                            <td style="height:40px;">&nbsp;</td>
+                                        </tr>
+                                        <!-- Title -->
+                                        <tr>
+                                            <td style="padding:0 15px; text-align:center;">
+                                                <h1 style="color:#1e1e2d; font-weight:400; margin:0;font-size:32px;font-family:'Rubik',sans-serif;">Phiếu khám bệnh</h1>
+                                                <span style="display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; 
+                                                width:100px;"></span>
+                                            </td>
+                                        </tr>
+                                        <!-- Details Table -->
+                                        <tr>
+                                            <td>
+                                                <table cellpadding="0" cellspacing="0"
+                                                    style="width: 100%; border: 1px solid #ededed">
+                                                    <tbody>
+                                                      
+                                                        <tr>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; border-right: 1px solid #ededed; width: 35%; font-weight:500; color:rgba(0,0,0,.64)">
+                                                                Bệnh nhân</td>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; color: #455056;">
+                                                                ${
+                                                                  patient.name
+                                                                }</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; border-right: 1px solid #ededed; width: 35%; font-weight:500; color:rgba(0,0,0,.64)">
+                                                                Bác sĩ</td>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; color: #455056;">
+                                                                ${
+                                                                  doctor.name
+                                                                }</td>
+                                                        </tr>
+                                                                                                      <tr>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; border-right: 1px solid #ededed; width: 35%; font-weight:500; color:rgba(0,0,0,.64)">
+                                                                Bệnh viện</td>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; color: #455056;">
+                                                                Bệnh Viện Phụ Sản - Nhi Đà Nẵng</td>
+                                                        </tr>
+                                                         <tr>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; border-right: 1px solid #ededed; width: 35%; font-weight:500; color:rgba(0,0,0,.64)">
+                                                                Địa chỉ</td>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; color: #455056;">
+                                                                402 Lê Văn Hiến, Quận Ngũ Hành Sơn, Thành phố Đà Nẵng</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed;border-right: 1px solid #ededed; width: 35%; font-weight:500; color:rgba(0,0,0,.64)">
+                                                                Dịch vụ</td>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; color: #455056;">
+                                                                Khám tim bẩm sinh</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td
+                                                                style="padding: 10px;  border-bottom: 1px solid #ededed; border-right: 1px solid #ededed; width: 35%;font-weight:500; color:rgba(0,0,0,.64)">
+                                                                Ngày khám</td>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; color: #455056;">
+                                                                ${new Date(
+                                                                  slot?.date
+                                                                ).toLocaleDateString(
+                                                                  "en-GB"
+                                                                )}
+                                                                </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; border-right: 1px solid #ededed; width: 35%;font-weight:500; color:rgba(0,0,0,.64)">
+                                                                Giờ khám</td>
+                                                            <td
+                                                                style="padding: 10px; border-bottom: 1px solid #ededed; color: #455056; ">
+                                                                ${new Date(
+                                                                  slot?.startTime
+                                                                ).toLocaleTimeString()} - ${new Date(
+          slot?.endTime
+        ).toLocaleTimeString()}
+                                    
+                                                              
+                                                                </td>
+                                                        </tr>
+                                                    
+                                                    </tbody>
+                                                </table>
+                                                <div style="text-align: center;">
+                                                <img src="cid:barcodeImage" alt="Barcode" style="display: block; margin: 0 auto;"/>
+                                              </div>
+                                            </td>
+                                       
+                                        </tr>
+                                     
+                                        <tr>
+                                            <td style="height:40px;">&nbsp;</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="height:20px;">&nbsp;</td>
+                            </tr>
+                            <tr>
+                              
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        
+        </html>
+        `,
+        attachments: [
+          {
+            filename: "barcode.png",
+            content: barcodeImageBuffer,
+            cid: "barcodeImage", // Set the CID (Content ID) of the attachment to be used in the email body
+          },
+        ],
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
