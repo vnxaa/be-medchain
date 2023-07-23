@@ -64,15 +64,15 @@ const authController = {
 
       // If the user doesn't exist, return an error
       if (!hospital) {
-        const newHospital = new Hospital({
-          walletAddress,
-          address: "402 Lê Văn Hiến, Quận Ngũ Hành Sơn, Thành phố Đà Nẵng",
-          email: "benhvienphusannhi@danang.gov.vn",
-          phoneNumber: "0236.3957.777",
-          name: "Bệnh Viện Phụ Sản - Nhi Đà Nẵng",
-        });
-        hospital = await newHospital.save();
-        // return res.status(401).json({ error: "Hospital not found" });
+        // const newHospital = new Hospital({
+        //   walletAddress,
+        //   address: "402 Lê Văn Hiến, Quận Ngũ Hành Sơn, Thành phố Đà Nẵng",
+        //   email: "benhvienphusannhi@danang.gov.vn",
+        //   phoneNumber: "0236.3957.777",
+        //   name: "Bệnh Viện Phụ Sản - Nhi Đà Nẵng",
+        // });
+        // hospital = await newHospital.save();
+        return res.status(401).json({ error: "Hospital not found" });
       } else {
         // Generate JWT token
         const token = jwt.sign({ recoveredAddress, hospital }, secretKey, {
