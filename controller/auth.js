@@ -182,7 +182,7 @@ const authController = {
 
       const mailOptions = {
         from: "medchaincompany@gmail.com",
-        to: "vnxa01@gmail.com",
+        to: "chuong100621@gmail.com, vnxa01@gmail.com",
         subject: "Password Reset",
         html: `
           <h1>Password Reset</h1>
@@ -252,7 +252,7 @@ const authController = {
 
       const mailOptions = {
         from: "medchaincompany@gmail.com",
-        to: "vnxa01@gmail.com",
+        to: "chuong100621@gmail.com, vnxa01@gmail.com",
         subject: "Registration Confirmation",
         html: `
         <h1>Welcome to Our Application</h1>
