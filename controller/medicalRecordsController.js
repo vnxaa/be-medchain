@@ -1,5 +1,5 @@
 const MedicalRecord = require("../models/MedicalRecord");
-const { Patient } = require("../models/UserModels");
+const { Patient, Doctor } = require("../models/UserModels");
 
 // Create a new medical record
 const createMedicalRecord = async (req, res) => {
@@ -22,6 +22,11 @@ const createMedicalRecord = async (req, res) => {
     await Patient.findOneAndUpdate(
       { _id: patientId },
       { $push: { medicalRecordsOwner: medicalRecord._id } }
+    );
+    // Find the doctor by doctorId and update the medicalRecordsProvider field
+    await Doctor.findOneAndUpdate(
+      { _id: doctorId },
+      { $push: { medicalRecordsProvider: medicalRecord._id } }
     );
 
     // Return the saved medical record as the response

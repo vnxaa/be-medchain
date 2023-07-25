@@ -32,4 +32,10 @@ router.get(
   "/code/:appointmentCode",
   appointmentsControllers.getAppointmentByCode
 );
+
+// API to get the appointment booking rate for each day of the week
+router.get(
+  "/booking-rate/:doctorId",
+  appointmentsControllers.getAppointmentBookingRate
+);
 module.exports = router;

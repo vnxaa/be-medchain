@@ -31,6 +31,7 @@ const authController = {
       if (!patient) {
         patient = new Patient({
           walletAddress,
+          picture: "https://ibb.co/k2VPchD",
         });
         await patient.save();
       }
@@ -207,10 +208,10 @@ const authController = {
   },
 
   register: async (req, res) => {
-    const { username, password, role, email, contactNumber } = req.body;
+    const { username, password, role, email, contactNumber, name } = req.body;
 
     // Simple validation
-    if (!username || !password || !role || !email || !contactNumber) {
+    if (!username || !password || !role || !email || !contactNumber || !name) {
       return res.status(400).json({
         success: false,
         message: "Missing username, password, role , email or contactNumber",
@@ -235,7 +236,9 @@ const authController = {
         password: hashedPassword,
         role,
         email,
+        picture: "https://i.ibb.co/v4CMzJd/default-avatar.png",
         contactNumber,
+        name,
       });
       await newUser.save();
       // Send email to the user

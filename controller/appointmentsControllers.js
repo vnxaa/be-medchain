@@ -1,10 +1,11 @@
 const Appointment = require("../models/Appointment");
 const AvailableSlot = require("../models/AvailableSlot");
 const { Patient, Doctor } = require("../models/UserModels");
-
 const Barcode = require("jsbarcode");
 const { createCanvas } = require("canvas");
 const nodemailer = require("nodemailer");
+const moment = require("moment");
+
 const generateCode = async () => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const randomCharacter = characters.charAt(
@@ -34,6 +35,40 @@ const generateBarcodeImage = async (code) => {
 
   return buffer;
 };
+
+// Function to calculate the booking rate for a specific day
+async function calculateBookingRate(doctorId, dayOfWeek) {
+  // Get the start and end dates of the day (from 00:00 to 23:59)
+  const startDate = moment().isoWeekday(dayOfWeek).startOf("day");
+  const endDate = moment().isoWeekday(dayOfWeek).endOf("day");
+
+  // Find all confirmed appointments for the doctor within the day
+  const confirmedAppointments = await Appointment.find({
+    doctor: doctorId,
+    status: "confirmed",
+  }).populate("slot");
+
+  const filteredAppointments = confirmedAppointments.filter((appointment) => {
+    // Check if the appointment has a valid slot and if its date falls within the specified day
+    return (
+      appointment.slot !== null &&
+      moment(appointment.slot.date).isBetween(startDate, endDate, null, "[]")
+    );
+  });
+  // console.log("confirmedAppointments", filteredAppointments.length);
+
+  // Find all available slots for the doctor within the day
+  const availableSlots = await AvailableSlot.find({
+    doctor: doctorId,
+    date: { $gte: startDate.toDate(), $lte: endDate.toDate() },
+  });
+  // console.log("availableSlots", availableSlots.length);
+  // Calculate the booking rate for the day
+  const bookingRate =
+    (filteredAppointments.length / availableSlots.length) * 100;
+
+  return isNaN(bookingRate) ? 0 : bookingRate;
+}
 const appointmentController = {
   makeAppointment: async (req, res) => {
     try {
@@ -132,7 +167,7 @@ const appointmentController = {
 
       // Update the appointment status
       appointment.status = status;
-
+      appointment.previous_status = "pending";
       // Save the updated appointment to the database
       await appointment.save();
 
@@ -172,7 +207,7 @@ const appointmentController = {
       }
       // Update the appointment status to "approved"
       appointment.status = "confirmed";
-
+      appointment.previous_status = "pending";
       // Update the appointment code
       const code = await generateCode();
       appointment.code = code;
@@ -436,6 +471,25 @@ const appointmentController = {
       res.json({ success: true, appointment });
     } catch (error) {
       console.log(error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  },
+  getAppointmentBookingRate: async (req, res) => {
+    try {
+      const { doctorId } = req.params;
+      const bookingRates = [];
+
+      // Calculate booking rate for each day of the week (from Monday to Sunday)
+      for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+        const bookingRate = await calculateBookingRate(doctorId, dayOfWeek);
+        bookingRates.push(bookingRate);
+      }
+
+      res.json({ success: true, bookingRates });
+    } catch (error) {
+      console.error(error);
       res
         .status(500)
         .json({ success: false, message: "Internal server error" });
