@@ -495,6 +495,106 @@ const appointmentController = {
         .json({ success: false, message: "Internal server error" });
     }
   },
+  getPendingAppointmentsForCurrentWeek: async (req, res) => {
+    try {
+      const pendingAppointments = await Appointment.find({
+        status: "pending",
+      }).populate("slot");
+
+      // Group appointments by day of the week
+      const pendingAppointmentsByDay = {};
+      for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+        const startDate = moment().isoWeekday(dayOfWeek).startOf("day");
+        const endDate = moment().isoWeekday(dayOfWeek).endOf("day");
+
+        const appointmentsForDay = pendingAppointments.filter((appointment) => {
+          return (
+            appointment.slot !== null &&
+            moment(appointment.slot.date).isBetween(
+              startDate,
+              endDate,
+              null,
+              "[]"
+            )
+          );
+        });
+
+        pendingAppointmentsByDay[dayOfWeek] = appointmentsForDay.length;
+      }
+
+      // Format the result to match the desired output
+      const formattedData = [];
+      for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+        formattedData.push(pendingAppointmentsByDay[dayOfWeek]);
+      }
+
+      res.json({ success: true, data: formattedData });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  },
+  getConfirmedAndCancelledAppointmentsForCurrentWeek: async (req, res) => {
+    try {
+      const confirmedAppointments = await Appointment.find({
+        status: "confirmed",
+      }).populate("slot");
+
+      const cancelledAppointments = await Appointment.find({
+        status: "cancelled",
+      }).populate("slot");
+
+      const data = [];
+
+      let totalConfirmedAppointments = 0;
+      let totalCancelledAppointments = 0;
+      for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+        const startDate = moment().isoWeekday(dayOfWeek).startOf("day");
+        const endDate = moment().isoWeekday(dayOfWeek).endOf("day");
+
+        const filteredConfirmedAppointments = confirmedAppointments.filter(
+          (appointment) => {
+            // Check if the appointment has a valid slot and if its date falls within the specified day
+            return (
+              appointment.slot !== null &&
+              moment(appointment.slot.date).isBetween(
+                startDate,
+                endDate,
+                null,
+                "[]"
+              )
+            );
+          }
+        );
+        totalConfirmedAppointments += filteredConfirmedAppointments.length;
+        const filteredCancelledAppointments = cancelledAppointments.filter(
+          (appointment) => {
+            // Check if the appointment has a valid slot and if its date falls within the specified day
+            return (
+              appointment.slot !== null &&
+              moment(appointment.slot.date).isBetween(
+                startDate,
+                endDate,
+                null,
+                "[]"
+              )
+            );
+          }
+        );
+        totalCancelledAppointments += filteredCancelledAppointments.length;
+      }
+      data[0] = totalConfirmedAppointments;
+      data[1] = totalCancelledAppointments;
+      res.json({ success: true, data: data });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  },
 };
 
 module.exports = appointmentController;

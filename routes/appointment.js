@@ -38,4 +38,13 @@ router.get(
   "/booking-rate/:doctorId",
   appointmentsControllers.getAppointmentBookingRate
 );
+// API to get all appointments with status "pending" for the current week
+router.get(
+  "/pending/current-week",
+  appointmentsControllers.getPendingAppointmentsForCurrentWeek
+);
+router.get(
+  "/confirmed-and-cancelled/current-week",
+  appointmentsControllers.getConfirmedAndCancelledAppointmentsForCurrentWeek
+);
 module.exports = router;
