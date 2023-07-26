@@ -595,6 +595,24 @@ const appointmentController = {
         .json({ success: false, message: "Internal server error" });
     }
   },
+  getConfirmedAppointmentsByPatientId: async (req, res) => {
+    try {
+      const { patientId } = req.params;
+
+      // Find all confirmed appointments for the given patient ID
+      const confirmedAppointments = await Appointment.find({
+        patient: patientId,
+        status: "confirmed",
+      }).populate("doctor slot");
+
+      res.json({ success: true, data: confirmedAppointments });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  },
 };
 
 module.exports = appointmentController;

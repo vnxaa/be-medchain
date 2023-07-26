@@ -47,4 +47,9 @@ router.get(
   "/confirmed-and-cancelled/current-week",
   appointmentsControllers.getConfirmedAndCancelledAppointmentsForCurrentWeek
 );
+// Route to get the  confirmed appointments by patient ID
+router.get(
+  "/confirmed-appointments/:patientId",
+  appointmentsControllers.getConfirmedAppointmentsByPatientId
+);
 module.exports = router;

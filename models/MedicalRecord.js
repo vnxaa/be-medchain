@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const medicalRecordSchema = new mongoose.Schema({
   patientId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Patient",
+    ref: "patient",
     required: true,
   },
   doctorId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Doctor",
+    ref: "doctor",
     required: true,
   },
   diagnosis: [
