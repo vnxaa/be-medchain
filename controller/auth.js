@@ -31,7 +31,7 @@ const authController = {
       if (!patient) {
         patient = new Patient({
           walletAddress,
-          picture: "https://ibb.co/k2VPchD",
+          picture: "https://i.ibb.co/v4CMzJd/default-avatar.png",
         });
         await patient.save();
       }
