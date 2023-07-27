@@ -142,6 +142,55 @@ const updateMedicalRecordDiagnosis = async (req, res) => {
       .json({ error: "Failed to update the medical record diagnosis" });
   }
 };
+const getMedicalRecordsByDoctorId = async (req, res) => {
+  try {
+    const doctorId = req.params.doctorId;
+
+    // Find the medical records by doctor ID for each status
+    const mintedRecords = await MedicalRecord.find({
+      doctorId: doctorId,
+      status: "minted",
+    });
+
+    const draftRecords = await MedicalRecord.find({
+      doctorId: doctorId,
+      status: "draft",
+    });
+    const rejectRecords = await MedicalRecord.find({
+      doctorId: doctorId,
+      status: "reject",
+    });
+
+    // Return the three arrays of medical records as the response
+    res.json({ mintedRecords, draftRecords, rejectRecords });
+  } catch (error) {
+    // Handle any errors that occurred during the process
+    console.error(error);
+    res.status(500).json({ error: "Failed to retrieve the medical records" });
+  }
+};
+const getAllMedicalRecordsForStatistics = async (req, res) => {
+  try {
+    // Find the medical records by doctor ID for each status
+    const mintedRecords = await MedicalRecord.find({
+      status: "minted",
+    });
+
+    const draftRecords = await MedicalRecord.find({
+      status: "draft",
+    });
+    const rejectRecords = await MedicalRecord.find({
+      status: "reject",
+    });
+
+    // Return the three arrays of medical records as the response
+    res.json({ mintedRecords, draftRecords, rejectRecords });
+  } catch (error) {
+    // Handle any errors that occurred during the process
+    console.error(error);
+    res.status(500).json({ error: "Failed to retrieve the medical records" });
+  }
+};
 module.exports = {
   createMedicalRecord,
   getMedicalRecordById,
@@ -149,4 +198,6 @@ module.exports = {
   updateMedicalRecordStatus,
   getMedicalRecordsByPatientId,
   updateMedicalRecordDiagnosis,
+  getMedicalRecordsByDoctorId,
+  getAllMedicalRecordsForStatistics,
 };

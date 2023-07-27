@@ -24,5 +24,14 @@ router.put(
   "/diagnosis/:id",
   medicalRecordsController.updateMedicalRecordDiagnosis
 );
-
+// Route to get medical records by doctor ID
+router.get(
+  "/doctor/:doctorId/",
+  medicalRecordsController.getMedicalRecordsByDoctorId
+);
+// Route to get all medical records for statistics
+router.get(
+  "/hospital/statistics/",
+  medicalRecordsController.getAllMedicalRecordsForStatistics
+);
 module.exports = router;
