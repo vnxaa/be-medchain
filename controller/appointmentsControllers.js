@@ -247,8 +247,6 @@ const appointmentController = {
         to: "chuong100621@gmail.com, vnxa01@gmail.com, nvh610@gmail.com, lcnguyen21042001@gmail.com", // Replace with the user's email address
         subject: "Đặt lịch khám thành công",
         html: `
-        
-
         <!doctype html>
         <html lang="en-US">
         
