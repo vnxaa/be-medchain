@@ -191,6 +191,25 @@ const getAllMedicalRecordsForStatistics = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve the medical records" });
   }
 };
+const getMedicalRecordsByDoctorIdAndPatientId = async (req, res) => {
+  try {
+    const doctorId = req.params.doctorId;
+    const patientId = req.params.patientId;
+
+    // Find the medical records by doctor ID and patient ID
+    const medicalRecords = await MedicalRecord.find({
+      doctorId: doctorId,
+      patientId: patientId,
+    });
+
+    // Return the medical records as the response
+    res.json(medicalRecords);
+  } catch (error) {
+    // Handle any errors that occurred during the process
+    console.error(error);
+    res.status(500).json({ error: "Failed to retrieve the medical records" });
+  }
+};
 module.exports = {
   createMedicalRecord,
   getMedicalRecordById,
@@ -200,4 +219,5 @@ module.exports = {
   updateMedicalRecordDiagnosis,
   getMedicalRecordsByDoctorId,
   getAllMedicalRecordsForStatistics,
+  getMedicalRecordsByDoctorIdAndPatientId,
 };

@@ -34,4 +34,9 @@ router.get(
   "/hospital/statistics/",
   medicalRecordsController.getAllMedicalRecordsForStatistics
 );
+// Route to get medical records by doctor ID and patient ID
+router.get(
+  "/doctor/:doctorId/patient/:patientId",
+  medicalRecordsController.getMedicalRecordsByDoctorIdAndPatientId
+);
 module.exports = router;

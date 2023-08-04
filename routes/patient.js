@@ -11,4 +11,8 @@ router.get("/", patientController.getAllPatients);
 // Route to update a patient
 router.put("/update/:id", patientController.updatePatient);
 
+// Route to update picture of patient
+router.put("/update-picture/:id", patientController.updatePicture);
+// Update patient information
+router.put("/:id", patientController.updatePatientInformation);
 module.exports = router;

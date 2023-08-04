@@ -19,7 +19,6 @@ const appointmentSchema = new mongoose.Schema(
     },
     code: {
       type: String,
-      unique: true,
     },
     description: {
       type: String,
