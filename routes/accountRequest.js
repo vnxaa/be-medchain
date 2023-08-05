@@ -42,4 +42,6 @@ router.get(
   "/staff/gender-counts",
   accountRequestController.getDoctorGenderCounts
 );
+// Route to check if an email already exists for a Staff or Doctor
+router.post("/checkEmailExist", accountRequestController.checkEmailExist);
 module.exports = router;

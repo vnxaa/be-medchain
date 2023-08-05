@@ -265,7 +265,7 @@ const authController = {
                                         </tr>
                                      
                                         <tr>
-                                            <td style="height:40px;">&nbsp;
+                                            <td style="height:40px;text-align: center;">&nbsp;
                                            Vui lòng đăng nhập bằng mật khẩu mới của bạn và thay đổi nó ngay lập tức                                      
                                           </td>
                                         </tr>

@@ -27,7 +27,7 @@ const rejectReasonController = {
       const medicalRecordId = req.params.medicalRecordId;
 
       // Find the reject reason by medicalRecordId
-      const rejectReason = await RejectReason.findOne({ medicalRecordId });
+      const rejectReason = await RejectReason.find({ medicalRecordId });
 
       if (!rejectReason) {
         return res

@@ -5,7 +5,23 @@ const moment = require("moment");
 const createAccountRequest = async (req, res) => {
   try {
     const { fullName, email, phoneNumber, role } = req.body;
+    // Check if the email already exists in the Staff or Doctor collections
+    const emailExistsInStaff = await Staff.findOne({ email });
+    const emailExistsInDoctor = await Doctor.findOne({ email });
+    if (emailExistsInStaff || emailExistsInDoctor) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
 
+    // Check if the phone number already exists in the Staff or Doctor collections
+    const phoneNumberExistsInStaff = await Staff.findOne({
+      contactNumber: phoneNumber,
+    });
+    const phoneNumberExistsInDoctor = await Doctor.findOne({
+      contactNumber: phoneNumber,
+    });
+    if (phoneNumberExistsInStaff || phoneNumberExistsInDoctor) {
+      return res.status(400).json({ error: "Phone number already exists" });
+    }
     // Create a new account request
     const accountRequest = new AccountRequest({
       fullName,
@@ -277,6 +293,22 @@ const getStaffGenderCounts = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const checkEmailExist = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Check if the email exists for a Staff or Doctor
+    const staff = await Staff.findOne({ email });
+    const doctor = await Doctor.findOne({ email });
+
+    // If the email exists for a Staff or Doctor, return true; otherwise, return false
+    const emailExists = staff || doctor ? true : false;
+
+    res.json({ emailExists });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 module.exports = {
   createAccountRequest,
   getAllAccountRequests,
@@ -289,4 +321,5 @@ module.exports = {
   getPatientGenderCounts,
   getDoctorGenderCounts,
   getStaffGenderCounts,
+  checkEmailExist,
 };
